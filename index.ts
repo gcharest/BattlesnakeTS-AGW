@@ -152,15 +152,14 @@ function move(gameState: GameState): MoveResponse {
   // @ts-ignore
   const centerMoves = Object.keys(possibleMoves).filter(key => possibleMoves[key].isMoveSafe && possibleMoves[key].isMoveTowardsCenter);
   console.log('centermoves', centerMoves, centerMoves.length);
-  // if (centerMoves.length > 0) {
-  //   // if there are safe moves that are going towards the center, choose it
-  //   nextMove = centerMoves[Math.floor(Math.random() * centerMoves.length)];
-  // }
-  // else {
-  // otherwise, choose one at random
-  nextMove = safeMoves[Math.floor(Math.random() * safeMoves.length)];
-
-  // }
+  if (centerMoves.length > 0) {
+    // if there are safe moves that are going towards the center, choose it
+    nextMove = centerMoves[Math.floor(Math.random() * centerMoves.length)];
+  }
+  else {
+    // otherwise, choose one at random
+    nextMove = safeMoves[Math.floor(Math.random() * safeMoves.length)];
+  }
 
   // TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
   // food = gameState.board.food;
