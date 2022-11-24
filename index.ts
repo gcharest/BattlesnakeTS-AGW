@@ -56,7 +56,7 @@ function move(gameState: GameState): MoveResponse {
       vCenter: (gameState.board.height % 2 > 0 ? ((gameState.board.height - 1) / 2 + 1) : (gameState.board.height / 2)),
     }
   }
-
+  // the 4 next possible moves
   let possibleMoves = {
     left: {
       isMoveSafe: true,
@@ -80,20 +80,9 @@ function move(gameState: GameState): MoveResponse {
     },
   }
 
-  // if (things.boardInfo.myNeck.x < things.boardInfo.myHead.x) {        // Neck is left of head, don't move left
-  //   possibleMoves.left.isMoveSafe = false;
-
-  // } else if (things.boardInfo.myNeck.x > things.boardInfo.myHead.x) { // Neck is right of head, don't move right
-  //   possibleMoves.right.isMoveSafe = false;
-
-  // } else if (things.boardInfo.myNeck.y < things.boardInfo.myHead.y) { // Neck is below head, don't move down
-  //   possibleMoves.down.isMoveSafe = false;
-
-  // } else if (things.boardInfo.myNeck.y > things.boardInfo.myHead.y) { // Neck is above head, don't move up
-  //   possibleMoves.up.isMoveSafe = false;
-  // }
-
-  // Step 1 - Prevent your Battlesnake from moving out of bounds
+  // -----------------------
+  // Dont go out of bounds
+  // -----------------------
   if (gameState.you.head.x === gameState.board.width - 1) {
     possibleMoves.right.isMoveSafe = false;
   } else if (gameState.you.head.x === 0) {
@@ -104,17 +93,10 @@ function move(gameState: GameState): MoveResponse {
   } else if (gameState.you.head.y === gameState.board.height - 1) {
     possibleMoves.up.isMoveSafe = false;
   }
-  // boardWidth = gameState.board.width;
-  // boardHeight = gameState.board.height;
 
-  // TODO: Step 2 - Prevent your Battlesnake from colliding with itself
-  // myBody = gameState.you.body;
-
-  // TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
-  // opponents = gameState.board.snakes;
-
-
-  // Avoid spaces that contain snakes (including us)
+  // -----------------------------------
+  // Avoid other snakes (including us)
+  // -----------------------------------
   let unsafeSpaces: Coord[] = [];
 
   gameState.board.snakes.forEach(snake => {
@@ -134,9 +116,9 @@ function move(gameState: GameState): MoveResponse {
     possibleMoves.down.isMoveSafe = false
   }
 
-
-
-  // Are there any safe moves left?
+  // --------------------------
+  // See if any moves are safe
+  // --------------------------
   // @ts-ignore
   const safeMoves = Object.keys(possibleMoves).filter(key => possibleMoves[key].isMoveSafe);
   console.log('safemoves', possibleMoves);
@@ -148,7 +130,9 @@ function move(gameState: GameState): MoveResponse {
   // Choose a random move from the safe moves
   let nextMove;
 
+  // --------------------------------
   // favor moving towards the center
+  // --------------------------------
   // @ts-ignore
   const centerMoves = Object.keys(possibleMoves).filter(key => possibleMoves[key].isMoveSafe && possibleMoves[key].isMoveTowardsCenter);
   console.log('centermoves', centerMoves, centerMoves.length);
@@ -161,15 +145,7 @@ function move(gameState: GameState): MoveResponse {
     nextMove = safeMoves[Math.floor(Math.random() * safeMoves.length)];
   }
 
-  // TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
-  // food = gameState.board.food;
-
-  // TODO: Isolate safe moves (up, down, right, left)
-
-  // TODO: Parse food spaces
-
-  // Log details about each turn
-
+  // log gamestate on first turn
   if (gameState.turn === 0) {
     console.log('gs', JSON.stringify(gameState));
   }
@@ -182,6 +158,10 @@ function move(gameState: GameState): MoveResponse {
   //console.log(`Body: ${JSON.stringify(gameState.you.body)}`);
   // console.log(`Snakes: ${JSON.stringify(gameState.board.snakes)}`)
   // console.log(`UnsafeSpaces: ${JSON.stringify(unsafeSpaces)}\n---\n`)
+
+  // --------------------------------
+  // UTILITIES
+  // --------------------------------
 
   // determine if given move goes closer to center or not
   function checkCenter(nextX: number, nextY: number) {
